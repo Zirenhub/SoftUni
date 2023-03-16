@@ -56,8 +56,9 @@ function loginPage(ctx) {
         alert(err.message);
       }
     }
-
-    sendLogIn();
+    if (email && password) {
+      sendLogIn();
+    }
   }
   render(
     html` ${headerTemplate(ctx.auth)} ${loginTemplate(submitLogIn)} `,

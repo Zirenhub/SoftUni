@@ -10,18 +10,17 @@ const headerTemplate = (auth) => html`<header>
     <div>
       <a href="/dashboard">Dashboard</a>
     </div>
-
-    <!-- Logged-in users -->
-    <div class="user">
-      <a href="#">Create Offer</a>
-      <a href="#">Logout</a>
-    </div>
-
-    <!-- Guest users -->
-    <div class="guest">
-      <a href="/login">Login</a>
-      <a href="#">Register</a>
-    </div>
+    ${auth
+      ? html` <!-- Logged-in users -->
+          <div class="user">
+            <a href="/create-offer">Create Offer</a>
+            <a href="/logout">Logout</a>
+          </div>`
+      : html` <!-- Guest users -->
+          <div class="guest">
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+          </div>`}
   </nav>
 </header>`;
 
