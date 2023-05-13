@@ -1,5 +1,4 @@
 const fs = require('fs/promises');
-const path = require('path');
 
 function getContentType(url) {
   if (url.endsWith('css')) {
@@ -10,6 +9,10 @@ function getContentType(url) {
     return 'image/png';
   } else if (url.endsWith('js')) {
     return 'text/js';
+  } else if (url.endsWith('jpg')) {
+    return 'image/jpg';
+  } else if (url.endsWith('jpeg')) {
+    return 'image/jpeg';
   }
 }
 
@@ -18,11 +21,20 @@ module.exports = async (req, res) => {
     if (req.method !== 'GET') {
       throw new Error('content method was not GET');
     }
-    const filePath = path.join(
-      __dirname,
-      path.normalize(`../../${req.url}`)
-    );
-    const data = await fs.readFile(filePath);
+    const { modifiedPath } = req;
+    const [type, file] = modifiedPath;
+    let data = null;
+    if (
+      file.endsWith('png') ||
+      file.endsWith('jpg') ||
+      file.endsWith('jpeg') ||
+      file.endsWith('ico')
+    ) {
+      data = await fs.readFile(`./${req.url}`);
+    } else {
+      data = await fs.readFile(`./${req.url}`, 'utf-8');
+    }
+
     res.writeHead(200, { 'Content-Type': getContentType(req.url) });
     return res.end(data);
   } catch (err) {

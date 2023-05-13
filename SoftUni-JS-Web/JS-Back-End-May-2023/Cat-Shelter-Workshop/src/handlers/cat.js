@@ -2,109 +2,132 @@ const fs = require('fs/promises');
 const path = require('path');
 const formidable = require('formidable');
 const querystring = require('querystring');
-const crypto = require('crypto');
+const {
+  getBreeds,
+  getCats,
+  generateRandomId,
+  dataFilePath,
+  viewsFilePath,
+} = require('../api');
 
-function generateRandomId(length) {
-  return crypto
-    .randomBytes(Math.ceil(length / 2))
-    .toString('hex')
-    .slice(0, length);
-}
-
-const dataFilePath = (name) => {
-  return path.join(__dirname, `../data/${name}`);
+const GETMethods = {
+  'add-cat': async () => {
+    const breeds = await getBreeds();
+    const catBreedPlaceholder = breeds.map(
+      (b) => `<option value=${b}>${b}</option>`
+    );
+    const file = await fs.readFile(
+      viewsFilePath('addCat.html'),
+      'utf-8'
+    );
+    return file
+      .toString()
+      .replace('{{catBreeds}}', catBreedPlaceholder);
+  },
+  'edit-cat': async () => {
+    const data = await fs.readFile(
+      viewsFilePath('editCat.html'),
+      'utf-8'
+    );
+    return data;
+  },
+  'add-breed': async () => {
+    const data = await fs.readFile(
+      viewsFilePath('addBreed.html'),
+      'utf-8'
+    );
+    return data;
+  },
 };
-const viewsFilePath = (name) => {
-  return path.join(__dirname, `../../views/${name}`);
+
+const POSTMethods = {
+  'add-breed': async (req, res) => {
+    let body = '';
+    req.on('data', (chunk) => {
+      body += chunk.toString();
+    });
+    req.on('end', async () => {
+      try {
+        const formData = querystring.parse(body);
+        const breedName = formData.breed;
+        const breeds = await getBreeds();
+        const breed = breeds.find((b) => b === breedName);
+        if (breed) {
+          res.writeHead(400, { 'Content-Type': 'text/plain' });
+          res.end('Breed already exists.');
+        } else {
+          breeds.push(breedName);
+          await fs.writeFile(
+            dataFilePath('breeds.json'),
+            JSON.stringify(breeds)
+          );
+          res.writeHead(302, {
+            Location: `http://${req.headers.host}`,
+          });
+          res.end();
+        }
+      } catch (err) {
+        throw new Error(err.message || 'Internal server error');
+      }
+    });
+  },
+  'add-cat': async (req, res) => {
+    const form = new formidable.IncomingForm();
+    form.parse(req, async (err, fields, files) => {
+      try {
+        if (err) {
+          console.error(err);
+          throw new Error('Error parsing form data');
+        }
+        const { upload } = files;
+        const ext = path.extname(upload.originalFilename);
+        const image = upload.newFilename + ext;
+        const newPath = path.join(
+          __dirname,
+          '../../content/images/',
+          image
+        );
+        await fs.rename(upload.filepath, newPath);
+        const newCat = {
+          ...fields,
+          image,
+          _id: generateRandomId(10),
+        };
+        const cats = await getCats();
+        cats.push(newCat);
+        await fs.writeFile(
+          dataFilePath('cats.json'),
+          JSON.stringify(cats)
+        );
+        res.writeHead(302, {
+          Location: `http://${req.headers.host}`,
+        });
+        res.end();
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end(err.message || 'Internal server error');
+      }
+    });
+  },
 };
 
 module.exports = async (req, res) => {
   try {
-    const breedsJSON = await fs.readFile(dataFilePath('breeds.json'));
-    const breeds = JSON.parse(breedsJSON);
-
     const { modifiedPath, method } = req;
     if (method === 'GET') {
-      let data = null;
-
-      if (modifiedPath === 'add-cat') {
-        const catBreedPlaceholder = breeds.map(
-          (b) => `<option value=${b}>${b}</option>`
-        );
-        const file = await fs.readFile(
-          viewsFilePath('addCat.html'),
-          'utf-8'
-        );
-        data = file
-          .toString()
-          .replace('{{catBreeds}}', catBreedPlaceholder);
-      } else if (modifiedPath === 'edit-cat') {
-        data = await fs.readFile(
-          viewsFilePath('editCat.html'),
-          'utf-8'
-        );
-      } else if (modifiedPath === 'add-breed') {
-        data = await fs.readFile(
-          viewsFilePath('addBreed.html'),
-          'utf-8'
-        );
-      }
-      if (data) {
+      if (GETMethods[modifiedPath[0]]) {
+        const data = await GETMethods[modifiedPath[0]]();
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(data);
+        return res.end(data);
       } else {
         throw new Error('View not found');
       }
     } else if (method === 'POST') {
-      if (modifiedPath === 'add-breed') {
-        let body = '';
-        req.on('data', (chunk) => {
-          body += chunk.toString();
-        });
-        req.on('end', async () => {
-          const formData = querystring.parse(body);
-          const breedName = formData.breed;
-          const breed = breeds.find((b) => b === breedName);
-          if (breed) {
-            res.writeHead(400, { 'Content-Type': 'text/plain' });
-            res.end('Breed already exists.');
-          } else {
-            breeds.push(breedName);
-            await fs.writeFile(
-              filePath('breeds.json'),
-              JSON.stringify(breeds)
-            );
-            res.writeHead(302, {
-              Location: `http://${req.headers.host}`,
-            });
-            res.end();
-          }
-        });
-      } else if (modifiedPath === 'add-cat') {
-        const form = new formidable.IncomingForm({
-          encoding: 'utf-8',
-          uploadDir: path.join(__dirname, '../../content/images/'),
-        });
-        form.parse(req, (err, fields, files) => {
-          if (err) {
-            console.error(err);
-            throw new Error('Error parsing form data');
-          }
-          const image =
-            files.upload.newFilename +
-            '.' +
-            files.upload.originalFilename.split('.')[1];
-          const newCat = {
-            ...fields,
-            image,
-            _id: generateRandomId(10),
-          };
-          console.log(newCat);
-        });
-      }
+      await POSTMethods[modifiedPath[0]](req, res);
     }
+    throw new Error('Method not found.');
   } catch (err) {
     res.writeHead(500, { 'Content-Type': 'text/plain' });
-    res.end(err.message);
+    res.end(err.message || 'Internal server error');
   }
 };

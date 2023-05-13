@@ -23,7 +23,7 @@ const server = http.createServer(async (req, res) => {
       if (pathname.length > 1) {
         pathname.shift();
       }
-      req.modifiedPath = pathname.join('/');
+      req.modifiedPath = pathname;
       view(req, res);
     } else {
       throw new Error('Internal Server Error');
