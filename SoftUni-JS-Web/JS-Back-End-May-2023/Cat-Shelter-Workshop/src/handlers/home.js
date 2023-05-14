@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
             <li class="btn edit"><a href="/cats/edit-cat/${
               c._id
             }">Change Info</a></li>
-            <li class="btn delete"><a href="/cats-find-new-home/${
+            <li class="btn delete"><a href="/cats/find-new-home/${
               c._id
             }">New Home</a></li>
           </ul>
