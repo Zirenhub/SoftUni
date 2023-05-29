@@ -18,37 +18,49 @@ const cubes = [
   },
 ];
 
-function getCubes(search, from, to) {
-  let result = cubes.slice();
+const getCubes = (req, res) => {
+  const { search, from, to } = req.query;
+  let cubes = cubes.slice();
   if (search) {
-    result = result.filter((c) =>
+    cubes = cubes.filter((c) =>
       c.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
     );
   }
   if (from) {
-    result = result.filter((c) => {
+    cubes = cubes.filter((c) => {
       return c.difficultyLevel >= Number(from);
     });
   }
   if (to) {
-    result = result.filter((c) => {
+    cubes = cubes.filter((c) => {
       return c.difficultyLevel <= Number(to);
     });
   }
-  return result;
-}
+  res.render('index', { cubes, query: { search, from, to } });
+};
 
-function findCube(id) {
-  const foundCube = cubes.find((c) => c._id === id);
-  return foundCube;
-}
+const detailsCube = (req, res) => {
+  const cube = cubes.find((c) => c._id === req.paras.id);
+  if (cube) {
+    res.render('details', cube);
+  } else {
+    next();
+  }
+};
 
-function createCube(cube) {
-  cubes.push({ ...cube, _id: uuid() });
-}
+const createCube = (req, res) => {
+  const { name, description, imageUrl, difficultyLevel } = req.body;
+  if (!name || !description || !imageUrl || !difficultyLevel) {
+    res.end('All fields should be present');
+    // or "next();" for a 404 page.
+  }
+  cubes.push({ name, description, imageUrl, difficultyLevel, _id: uuid() });
+
+  res.redirect('/');
+};
 
 module.exports = {
   getCubes,
   createCube,
-  findCube,
+  detailsCube,
 };
