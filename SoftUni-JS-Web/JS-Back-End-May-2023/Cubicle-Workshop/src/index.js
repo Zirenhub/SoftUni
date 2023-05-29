@@ -8,6 +8,7 @@ require('dotenv').config();
 
 const homepageRoute = require('./routes/homepage');
 const cubeRoute = require('./routes/cube');
+const accessoryRoute = require('./routes/accessory');
 
 const app = express();
 const hbs = handlebars.create({
@@ -27,6 +28,7 @@ const PORT = 5000;
 const server = http.createServer(app);
 
 app.use('/cube', cubeRoute);
+app.use('/accessory', accessoryRoute);
 app.use('/', homepageRoute);
 app.use((req, res, next) => {
   res.status(404).render('404');
