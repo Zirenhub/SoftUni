@@ -10,7 +10,6 @@ const CubeSchema = new Schema(
     description: {
       type: String,
       required: true,
-      maxLength: 30,
     },
     imageUrl: {
       type: String,
@@ -32,4 +31,4 @@ const CubeSchema = new Schema(
 
 const CubeModel = mongoose.model('Cube', CubeSchema);
 
-export default CubeModel;
+module.exports = CubeModel;
