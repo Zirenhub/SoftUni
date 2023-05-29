@@ -1,46 +1,30 @@
-const { uuid } = require('uuidv4');
+const CubeModel = require('../models/Cube');
 
-const cubes = [
-  {
-    _id: uuid(),
-    name: 'Classic Cube',
-    description: "This is a classic rubik's cube we all know and love!",
-    imageUrl:
-      'https://cdn.shopify.com/s/files/1/0482/9177/4628/products/o3rmamdfu2kartbxpul9.jpg?v=1681761411',
-    difficultyLevel: 3,
-  },
-  {
-    _id: uuid(),
-    name: 'Mirror Cube',
-    description: 'A very strange cube...',
-    imageUrl: 'https://m.media-amazon.com/images/I/71TrvUl50OL.jpg',
-    difficultyLevel: 4,
-  },
-];
-
-const getCubes = (req, res) => {
-  const { search, from, to } = req.query;
-  let cubes = cubes.slice();
-  if (search) {
-    cubes = cubes.filter((c) =>
-      c.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-    );
+const getCubes = async (req, res) => {
+  try {
+    const { search, from, to } = req.query;
+    const query = {};
+    if (search) {
+      query.name = { $regex: new RegExp(search, 'i') };
+    }
+    if (from || to) {
+      query.difficultyLevel = {};
+      if (from) {
+        query.difficultyLevel.$gte = parseInt(from);
+      }
+      if (to) {
+        query.difficultyLevel.$lte = parseInt(to);
+      }
+    }
+    const cubes = await CubeModel.find(query).lean();
+    res.render('index', { cubes, query: { search, from, to } });
+  } catch (err) {
+    console.err(err);
   }
-  if (from) {
-    cubes = cubes.filter((c) => {
-      return c.difficultyLevel >= Number(from);
-    });
-  }
-  if (to) {
-    cubes = cubes.filter((c) => {
-      return c.difficultyLevel <= Number(to);
-    });
-  }
-  res.render('index', { cubes, query: { search, from, to } });
 };
 
 const detailsCube = (req, res) => {
-  const cube = cubes.find((c) => c._id === req.paras.id);
+  const cube = dummbyDB.find((c) => c._id === req.paras.id);
   if (cube) {
     res.render('details', cube);
   } else {
@@ -48,15 +32,24 @@ const detailsCube = (req, res) => {
   }
 };
 
-const createCube = (req, res) => {
-  const { name, description, imageUrl, difficultyLevel } = req.body;
-  if (!name || !description || !imageUrl || !difficultyLevel) {
-    res.end('All fields should be present');
-    // or "next();" for a 404 page.
+const createCube = async (req, res) => {
+  try {
+    const { name, description, imageUrl, difficultyLevel } = req.body;
+    if (!name || !description || !imageUrl || !difficultyLevel) {
+      res.end('All fields should be present');
+      // or "next();" for a 404 page.
+    }
+    const newCube = new CubeModel({
+      name,
+      description,
+      imageUrl,
+      difficultyLevel,
+    });
+    await newCube.save();
+    res.redirect('/');
+  } catch (err) {
+    console.err(err);
   }
-  cubes.push({ name, description, imageUrl, difficultyLevel, _id: uuid() });
-
-  res.redirect('/');
 };
 
 module.exports = {
