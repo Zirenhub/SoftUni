@@ -1,4 +1,5 @@
 const CubeModel = require('../models/Cube');
+const AccessoryModel = require('../models/Accessory');
 
 const getCubes = async (req, res) => {
   try {
@@ -24,9 +25,12 @@ const getCubes = async (req, res) => {
 };
 
 const detailsCube = async (req, res) => {
-  const cube = await CubeModel.findById(req.params.id);
+  const cube = await CubeModel.findById(req.params.id)
+    .populate('accessories')
+    .lean();
+  const hasAccessories = cube.accessories.length > 0;
   if (cube) {
-    res.render('details', cube);
+    res.render('details', { cube, hasAccessories });
   } else {
     next();
   }
