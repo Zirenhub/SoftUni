@@ -10,7 +10,6 @@ const AccessorySchema = new Schema(
     description: {
       type: String,
       required: true,
-      maxLength: 30,
     },
     imageUrl: {
       type: String,
