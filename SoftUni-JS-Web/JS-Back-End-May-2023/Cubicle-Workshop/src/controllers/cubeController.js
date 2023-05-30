@@ -23,8 +23,8 @@ const getCubes = async (req, res) => {
   }
 };
 
-const detailsCube = (req, res) => {
-  const cube = dummbyDB.find((c) => c._id === req.paras.id);
+const detailsCube = async (req, res) => {
+  const cube = await CubeModel.findById(req.params.id);
   if (cube) {
     res.render('details', cube);
   } else {
