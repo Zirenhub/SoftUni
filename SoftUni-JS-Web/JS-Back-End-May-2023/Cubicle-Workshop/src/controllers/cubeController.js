@@ -20,7 +20,8 @@ const getCubes = async (req, res) => {
     const cubes = await CubeModel.find(query).lean();
     res.render('index', { cubes, query: { search, from, to } });
   } catch (err) {
-    console.err(err);
+    console.log(err);
+    res.send(err.message);
   }
 };
 
@@ -52,7 +53,8 @@ const createCube = async (req, res) => {
     await newCube.save();
     res.redirect('/');
   } catch (err) {
-    console.err(err);
+    console.log(err);
+    res.send(err.message);
   }
 };
 
