@@ -9,6 +9,7 @@ require('dotenv').config();
 const homepageRoute = require('./routes/homepage');
 const cubeRoute = require('./routes/cube');
 const accessoryRoute = require('./routes/accessory');
+const authRoute = require('./routes/auth');
 
 const app = express();
 const hbs = handlebars.create({
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 const PORT = 5000;
 const server = http.createServer(app);
 
+app.use('/auth', authRoute);
 app.use('/cube', cubeRoute);
 app.use('/accessory', accessoryRoute);
 app.use('/', homepageRoute);
