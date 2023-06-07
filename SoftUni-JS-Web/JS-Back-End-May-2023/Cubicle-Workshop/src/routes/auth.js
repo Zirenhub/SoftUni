@@ -8,6 +8,10 @@ router.get('/register', (req, res) => {
 router.get('/login', (req, res) => {
   res.render('auth/login');
 });
+router.get('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.redirect('/');
+});
 
 router.post('/register', register);
 router.post('/login', login);
