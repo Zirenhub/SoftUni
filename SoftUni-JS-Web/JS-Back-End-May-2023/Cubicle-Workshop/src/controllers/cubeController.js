@@ -31,7 +31,7 @@ const detailsCube = async (req, res) => {
     .lean();
   const hasAccessories = cube.accessories.length > 0;
   if (cube) {
-    res.render('details', { cube, hasAccessories });
+    res.render('cube/details', { cube, hasAccessories });
   } else {
     next();
   }
