@@ -37,8 +37,8 @@ app.use('/auth', authRoute);
 app.use('/cube', cubeRoute);
 app.use('/accessory', isAuth, accessoryRoute);
 app.use('/', homepageRoute);
-app.use((req, res, next) => {
-  res.status(404).render('404');
+app.use((err, req, res, next) => {
+  res.status(404).render('404', { err });
 });
 
 mongoose
