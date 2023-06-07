@@ -3,6 +3,7 @@ const http = require('http');
 const handlebars = require('express-handlebars');
 const mongoose = require('mongoose');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 
 require('dotenv').config();
 
@@ -10,6 +11,8 @@ const homepageRoute = require('./routes/homepage');
 const cubeRoute = require('./routes/cube');
 const accessoryRoute = require('./routes/accessory');
 const authRoute = require('./routes/auth');
+
+const authMiddleware = require('./middlewares/authMiddleware');
 
 const app = express();
 const hbs = handlebars.create({
@@ -24,6 +27,8 @@ app.engine('.hbs', hbs.engine);
 app.set('view engine', '.hbs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(authMiddleware);
 
 const PORT = 5000;
 const server = http.createServer(app);
