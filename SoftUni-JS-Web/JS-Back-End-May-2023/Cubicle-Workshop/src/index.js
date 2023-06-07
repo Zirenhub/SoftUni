@@ -12,7 +12,7 @@ const cubeRoute = require('./routes/cube');
 const accessoryRoute = require('./routes/accessory');
 const authRoute = require('./routes/auth');
 
-const authMiddleware = require('./middlewares/authMiddleware');
+const { authMiddleware, isAuth } = require('./middlewares/authMiddleware');
 
 const app = express();
 const hbs = handlebars.create({
@@ -35,7 +35,7 @@ const server = http.createServer(app);
 
 app.use('/auth', authRoute);
 app.use('/cube', cubeRoute);
-app.use('/accessory', accessoryRoute);
+app.use('/accessory', isAuth, accessoryRoute);
 app.use('/', homepageRoute);
 app.use((req, res, next) => {
   res.status(404).render('404');

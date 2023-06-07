@@ -6,6 +6,8 @@ const authMiddleware = (req, res, next) => {
     try {
       const user = jwt.verify(token, process.env.JWT_SECRET);
       req.user = user;
+      res.locals.user = user;
+      res.locals.isAuthenticated = true;
       next();
     } catch (err) {
       res.clearCookie('token');
@@ -16,4 +18,12 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+const isAuth = (req, res, next) => {
+  if (!req.user) {
+    return res.redirect('/auth/login');
+  }
+
+  next();
+};
+
+module.exports = { authMiddleware, isAuth };
