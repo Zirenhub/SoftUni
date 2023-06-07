@@ -7,6 +7,11 @@ const CubeSchema = new Schema(
       type: String,
       required: true,
     },
+    owner: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
     description: {
       type: String,
       required: true,
