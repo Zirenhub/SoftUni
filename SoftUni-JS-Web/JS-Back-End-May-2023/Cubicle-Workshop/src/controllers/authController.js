@@ -24,7 +24,7 @@ const login = async (req, res) => {
     const { username, password } = req.body;
     const user = await UserModel.findOne({ username }).lean();
     if (!user) {
-      res.send('User doesnt exist');
+      res.send('Wrong username or password');
     } else {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
@@ -33,6 +33,8 @@ const login = async (req, res) => {
         });
         res.cookie('token', token, { httpOnly: true });
         res.redirect('/');
+      } else {
+        res.send('Wrong username or password');
       }
     }
   } catch (err) {
