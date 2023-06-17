@@ -1,12 +1,18 @@
 const express = require('express');
-const { createPost } = require('../managers/catalogManager');
+const { createPost, getAllPosts } = require('../managers/catalogManager');
 const { isAuth } = require('../middlewares/authMiddleware');
 const { errorHandler } = require('../util/errorHandler');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.render('catalog');
+router.get('/', async (req, res) => {
+  try {
+    const posts = await getAllPosts();
+    res.render('catalog', { posts });
+  } catch (err) {
+    const errorMessage = errorHandler(err);
+    res.render('/', { error: errorMessage });
+  }
 });
 
 router.get('/create', isAuth, (req, res) => {

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const userManager = require('../managers/userManager');
+const { errorHandler } = require('../util/errorHandler');
 
 router.get('/register', (req, res) => {
   res.render('auth/register');
@@ -36,7 +37,8 @@ router.post('/register', async (req, res) => {
     res.cookie('token', token, { httpOnly: true });
     res.redirect('/');
   } catch (err) {
-    res.render('auth/register', { error: err.message });
+    const error = errorHandler(err);
+    res.render('auth/register', { error });
   }
 });
 
@@ -48,7 +50,9 @@ router.post('/login', async (req, res) => {
     res.cookie('token', token, { httpOnly: true });
     res.redirect('/');
   } catch (err) {
-    res.render('auth/login', { error: err.message });
+    const error = errorHandler(err);
+
+    res.render('auth/login', { error });
   }
 });
 
