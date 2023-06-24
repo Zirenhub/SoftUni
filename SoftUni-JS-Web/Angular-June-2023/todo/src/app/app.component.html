@@ -1,0 +1,56 @@
+<main class="p-3 bg-gray-200 h-full flex flex-col gap-3">
+  <header class="flex gap-3 bg-white p-2 rounded-md shadow-md">
+    <button
+      (click)="openModal()"
+      class="bg-green-500 text-white rounded-sm px-3 py-1"
+    >
+      Create Todo
+    </button>
+    <button class="bg-red-500 text-white rounded-sm px-3 py-1">History</button>
+  </header>
+
+  <div class="flex flex-col gap-3 bg-white shadow-md rounded-md grow">
+    <div
+      *ngIf="createModalIsOpen"
+      class="fixed -translate-y-2/4 -translate-x-2/4 left-2/4 top-2/4"
+    >
+      <div class="bg-white rounded-md p-3 shadow-md border flex flex-col gap-4">
+        <div class="flex justify-between">
+          <p class="opacity-40">Create Todo</p>
+          <button (click)="closeModal()" class="text-red-500">X</button>
+        </div>
+        <form
+          [formGroup]="createForm"
+          (ngSubmit)="onSubmit()"
+          class="flex flex-col gap-3"
+        >
+          <label class="flex flex-col">
+            Todo name:
+            <input
+              type="text"
+              formControlName="name"
+              class="bg-gray-200 px-2"
+            />
+          </label>
+          <label class="flex flex-col">
+            Content:
+            <textarea
+              formControlName="content"
+              class="bg-gray-200 px-2"
+            ></textarea>
+          </label>
+          <label class="flex flex-col">
+            Date:
+            <input type="date" formControlName="due" />
+          </label>
+          <button
+            type="submit"
+            class="text-white rounded-md font-bold bg-blue-400"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
