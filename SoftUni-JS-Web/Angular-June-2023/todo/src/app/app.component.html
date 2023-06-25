@@ -49,8 +49,14 @@
           >
             Submit
           </button>
+          <ul *ngIf="createForm.invalid">
+            <li *ngFor="let item of createFormErrors | keyvalue">
+              {{ item.key }}: {{ item.value }}
+            </li>
+          </ul>
         </form>
       </div>
     </div>
+    <app-list [todos]="todos" />
   </div>
 </main>
