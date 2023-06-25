@@ -5,13 +5,8 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-
-type Todo = {
-  name: string;
-  content: string;
-  due: Date;
-  createDate: Date;
-};
+import { Todo } from 'src/types/todo';
+import { v4 as uuidv4 } from 'uuid';
 
 type FormErrors = {
   [key: string]: any;
@@ -30,10 +25,11 @@ function validateDate(control: FormControl): ValidationErrors | null {
 export class AppComponent {
   createModalIsOpen = false;
   createForm = new FormGroup({
-    name: new FormControl(null, [Validators.required]),
-    content: new FormControl(null, [Validators.required]),
-    due: new FormControl(null, [Validators.required, validateDate]),
+    name: new FormControl('', [Validators.required]),
+    content: new FormControl('', [Validators.required]),
+    due: new FormControl(new Date(), [Validators.required, validateDate]),
   });
+  createFormErrors: FormErrors = {};
 
   todos: Todo[] = [];
 
@@ -51,11 +47,19 @@ export class AppComponent {
   onSubmit() {
     if (this.createForm.invalid) {
       const errors = this.getErrors();
-      console.log(errors);
+      this.createFormErrors = errors;
       return;
     }
     const { name, content, due } = this.createForm.value;
-    console.log(name, content, due);
+    const newTodo: Todo = {
+      name: name as string,
+      content: content as string,
+      due: due as Date,
+      _id: uuidv4(),
+      isChecked: false,
+    };
+    this.todos.push(newTodo);
+    this.closeModal();
   }
 
   openModal() {
