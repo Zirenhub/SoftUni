@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Todo } from 'src/types/todo';
-import { v4 as uuidv4 } from 'uuid';
+import { TodosService } from './todos.service';
 
 type FormErrors = {
   [key: string]: any;
@@ -22,7 +22,7 @@ function validateDate(control: FormControl): ValidationErrors | null {
   selector: 'app-root',
   templateUrl: './app.component.html',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   createModalIsOpen = false;
   createForm = new FormGroup({
     name: new FormControl('', [Validators.required]),
@@ -32,6 +32,12 @@ export class AppComponent {
   createFormErrors: FormErrors = {};
 
   todos: Todo[] = [];
+
+  constructor(private todosService: TodosService) {}
+
+  ngOnInit() {
+    this.getTodos();
+  }
 
   getErrors() {
     const errors: FormErrors = {};
@@ -51,15 +57,15 @@ export class AppComponent {
       return;
     }
     const { name, content, due } = this.createForm.value;
-    const newTodo: Todo = {
-      name: name as string,
-      content: content as string,
-      due: due as Date,
-      _id: uuidv4(),
-      isChecked: false,
-    };
-    this.todos.push(newTodo);
+    if (!name || !content || !due) {
+      return;
+    }
+    this.todosService.createTodo(name, content, due);
     this.closeModal();
+  }
+
+  getTodos() {
+    this.todos = this.todosService.getTodos();
   }
 
   openModal() {
