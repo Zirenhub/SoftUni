@@ -17,6 +17,13 @@ export class TodosService {
       isChecked: false,
     };
     this.todos.push(newTodo);
+    return this.todos;
+  }
+
+  deleteTodo(id: string) {
+    const modifiedTodos = this.todos.filter((x) => x._id !== id);
+    this.todos = modifiedTodos;
+    return this.todos;
   }
 
   getTodos() {
