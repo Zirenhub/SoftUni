@@ -1,0 +1,10 @@
+/* main  */
+
+main {
+  width: 50%;
+}
+
+.site {
+  max-width: 50em;
+  margin: 0 auto;
+}
