@@ -7,11 +7,18 @@ import { CoreModule } from './core/core.module';
 import { MainComponent } from './main/main.component';
 import { ThemesListComponent } from './main/themes-list/themes-list.component';
 import { RecentPostsComponent } from './main/recent-posts/recent-posts.component';
+import { ApiService } from './api.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
-  declarations: [AppComponent, MainComponent, ThemesListComponent, RecentPostsComponent],
-  imports: [BrowserModule, AppRoutingModule, CoreModule],
-  providers: [],
+  declarations: [
+    AppComponent,
+    MainComponent,
+    ThemesListComponent,
+    RecentPostsComponent,
+  ],
+  imports: [BrowserModule, AppRoutingModule, CoreModule, HttpClientModule],
+  providers: [ApiService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
