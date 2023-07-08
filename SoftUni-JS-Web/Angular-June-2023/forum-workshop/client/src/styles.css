@@ -10,15 +10,25 @@
 /*
 *Reset CSS model sizing calculations
 */
-
-html {
-  box-sizing: border-box;
-}
+/* 
+.container {
+  width: 90%;
+  margin: auto;
+  padding-bottom: 4.5em;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-evenly;
+} */
 
 *,
 *:before,
 *:after {
   box-sizing: inherit;
+}
+
+.site {
+  max-width: 50em;
+  margin: 0 auto;
 }
 
 body {
