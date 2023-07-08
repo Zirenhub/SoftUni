@@ -1,5 +1,8 @@
 <!-- homepage -->
 <div class="container">
-  <app-themes-list />
-  <app-recent-posts />
+  <app-welcome *ngIf="!isLoggedIn" />
+  <div class="flex">
+    <app-themes-list />
+    <app-recent-posts />
+  </div>
 </div>
