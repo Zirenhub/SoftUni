@@ -21,4 +21,8 @@ export class ApiService {
     const filter = limit ? `?limit=${limit}` : '';
     return this.http.get<Post[]>(`${environment.URL}/posts${filter}`);
   }
+
+  createTheme(themeName: string, postText: string) {
+    return this.http.post(`${environment.URL}/themes`, { themeName, postText });
+  }
 }
