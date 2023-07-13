@@ -14,7 +14,8 @@ import { ThemeModule } from './theme/theme.module';
 import { UserService } from './auth/user.service';
 import { AuthActivate } from './core/guards/auth.activate';
 import { WelcomeComponent } from './welcome/welcome.component';
-import { ProfileComponent } from './profile/profile.component';
+import { ProfileModule } from './profile/profile.module';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -22,16 +23,18 @@ import { ProfileComponent } from './profile/profile.component';
     MainComponent,
     ThemesListComponent,
     RecentPostsComponent,
-    ProfileComponent,
+    NotFoundComponent,
   ],
   imports: [
     WelcomeComponent,
     BrowserModule,
-    AppRoutingModule,
     CoreModule,
     HttpClientModule,
     AuthModule,
     ThemeModule,
+    ProfileModule,
+    // always load the app routing last, otherwise 404 page will always have priority
+    AppRoutingModule,
   ],
   providers: [ApiService, UserService, AuthActivate],
   bootstrap: [AppComponent],
