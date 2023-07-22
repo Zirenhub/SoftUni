@@ -1,6 +1,6 @@
 <!-- homepage -->
 <div class="container">
-  <form class="login" action="" method="post">
+  <form class="login" [formGroup]="form" (ngSubmit)="login()">
     <fieldset>
       <h2>Login Form</h2>
 
@@ -14,13 +14,20 @@
           name="email"
           id="email"
           placeholder="john.doe@gmail.com"
-          #inputEmail
+          formControlName="email"
         />
       </p>
-      <p class="error">Email is required!</p>
-      <!-- <p class="error">
-              Email is not valid!
-          </p> -->
+      <ng-container *ngIf="form.get('email')?.touched">
+        <p class="error" *ngIf="form.get('email')?.errors?.['required']">
+          Email is required!
+        </p>
+        <p class="error" *ngIf="form.get('email')?.errors?.['minlength']">
+          Email must be at least 6 characters!
+        </p>
+        <p class="error" *ngIf="form.get('email')?.errors?.['invalidEmail']">
+          Email is not valid!
+        </p>
+      </ng-container>
 
       <p class="field field-icon">
         <label for="password"
@@ -31,27 +38,23 @@
           name="password"
           id="password"
           placeholder="******"
-          #inputPassword
+          formControlName="password"
         />
       </p>
-      <!-- <p class="error">
-              Password is required!
-          </p>
-          <p class="error">
-              Password must be at least 4 characters!
-          </p> -->
+      <ng-container *ngIf="form.get('password')?.touched">
+        <p class="error" *ngIf="form.get('password')?.errors?.['required']">
+          Password is required!
+        </p>
+        <p class="error" *ngIf="form.get('password')?.errors?.['minlength']">
+          Password must be at least 5 characters!
+        </p>
+      </ng-container>
 
-      <button
-        (click)="
-          login({ email: inputEmail.value, password: inputPassword.value })
-        "
-      >
-        Login
-      </button>
+      <button type="submit">Login</button>
 
       <p class="text-center">
         Have an account?
-        <a href="#">Register</a>
+        <a href="/register">Register</a>
       </p>
     </fieldset>
   </form>
