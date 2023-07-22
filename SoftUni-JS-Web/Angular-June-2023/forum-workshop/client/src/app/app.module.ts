@@ -16,6 +16,8 @@ import { AuthActivate } from './core/guards/auth.activate';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { ProfileModule } from './profile/profile.module';
 import { NotFoundComponent } from './not-found/not-found.component';
+import {} from './shared/validators/email.directive';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
   imports: [
     WelcomeComponent,
     BrowserModule,
+    SharedModule,
     CoreModule,
     HttpClientModule,
     AuthModule,
