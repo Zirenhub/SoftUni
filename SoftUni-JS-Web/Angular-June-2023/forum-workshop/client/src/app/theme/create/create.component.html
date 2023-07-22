@@ -4,12 +4,24 @@
     <div class="header-background">
       <span>New Theme</span>
     </div>
-    <form>
+    <form [formGroup]="form" (ngSubmit)="submit()">
       <div class="new-theme-title">
         <label for="themeName">Title <span class="red">*</span></label>
-        <input #themeName type="text" name="themeName" id="themeName" />
-        <p class="error">Theme name is required.</p>
-        <p class="error">Theme name must be at least 5 characters long.</p>
+        <input
+          #themeName
+          type="text"
+          name="themeName"
+          id="themeName"
+          formControlName="title"
+        />
+        <ng-container *ngIf="form.get('title')?.touched">
+          <p class="error" *ngIf="form.get('title')?.errors?.['required']">
+            Theme name is required.
+          </p>
+          <p class="error" *ngIf="form.get('title')?.errors?.['minlength']">
+            Theme name must be at least 5 characters long.
+          </p>
+        </ng-container>
       </div>
       <div class="new-theme-content">
         <label for="postText">Post <span class="red">*</span></label>
@@ -20,21 +32,22 @@
           id="postText"
           rows="8"
           class="height"
+          formControlName="post"
         ></textarea>
-        <p class="error">The field with your post is required.</p>
-        <p class="error">Post must be at least 10 characters long.</p>
+        <ng-container *ngIf="form.get('post')?.touched">
+          <p class="error" *ngIf="form.get('post')?.errors?.['required']">
+            The field with your post is required.
+          </p>
+          <p class="error" *ngIf="form.get('post')?.errors?.['minlength']">
+            Post must be at least 10 characters long.
+          </p>
+        </ng-container>
       </div>
       <div class="new-theme-buttons">
         <button type="button" (click)="navigateHome()" class="cancel">
           Cancel
         </button>
-        <button
-          type="submit"
-          (click)="
-            submit(themeName.value, postText.value); $event.preventDefault()
-          "
-          class="public"
-        >
+        <button [disabled]="form.invalid" type="submit" class="public">
           Post
         </button>
       </div>

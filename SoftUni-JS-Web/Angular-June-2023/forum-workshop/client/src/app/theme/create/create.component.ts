@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/api.service';
 
@@ -8,17 +9,25 @@ import { ApiService } from 'src/app/api.service';
   styleUrls: ['./create.component.css'],
 })
 export class CreateComponent {
-  constructor(private api: ApiService, private router: Router) {}
+  form = this.fb.group({
+    title: ['', [Validators.required, Validators.minLength(5)]],
+    post: ['', [Validators.required, Validators.minLength(10)]],
+  });
+
+  constructor(
+    private api: ApiService,
+    private router: Router,
+    private fb: FormBuilder
+  ) {}
 
   navigateHome() {
     this.router.navigate(['/']);
   }
 
-  submit(themeName: string, postText: string) {
-    // implement more validation later
-    // Unauthorized: invalid token, fix later
-    if (themeName && postText) {
-      this.api.createTheme(themeName, postText).subscribe({
+  submit() {
+    const { title, post } = this.form.value;
+    if (title && post) {
+      this.api.createTheme(title, post).subscribe({
         next: (data) => {
           console.log(data);
         },
