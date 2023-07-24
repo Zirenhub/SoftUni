@@ -9,15 +9,15 @@ import { ThemesListComponent } from './main/themes-list/themes-list.component';
 import { RecentPostsComponent } from './main/recent-posts/recent-posts.component';
 import { ApiService } from './api.service';
 import { HttpClientModule } from '@angular/common/http';
-import { AuthModule } from './auth/auth.module';
 import { ThemeModule } from './theme/theme.module';
 import { UserService } from './auth/user.service';
 import { AuthActivate } from './core/guards/auth.activate';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { ProfileModule } from './profile/profile.module';
 import { NotFoundComponent } from './not-found/not-found.component';
-import {} from './shared/validators/email.directive';
 import { SharedModule } from './shared/shared.module';
+import { appInterceptorProvider } from './app-interceptor';
+import { AuthentiacteComponent } from './authentiacte/authentiacte.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +26,7 @@ import { SharedModule } from './shared/shared.module';
     ThemesListComponent,
     RecentPostsComponent,
     NotFoundComponent,
+    AuthentiacteComponent,
   ],
   imports: [
     WelcomeComponent,
@@ -33,13 +34,12 @@ import { SharedModule } from './shared/shared.module';
     SharedModule,
     CoreModule,
     HttpClientModule,
-    AuthModule,
     ThemeModule,
     ProfileModule,
     // always load the app routing last, otherwise 404 page will always have priority
     AppRoutingModule,
   ],
-  providers: [ApiService, UserService, AuthActivate],
+  providers: [ApiService, UserService, AuthActivate, appInterceptorProvider],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
