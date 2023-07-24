@@ -1,45 +1,59 @@
-import { Injectable } from '@angular/core';
-
-type User = {
-  _id: string;
-  email: string;
-  firstName: string;
-};
+import { HttpClient } from '@angular/common/http';
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Subscription, tap } from 'rxjs';
+import { LoginData, RegisterData, User } from 'src/types/auth';
 
 @Injectable()
-export class UserService {
-  userKey: string = 'forumUser';
-  user: User | undefined;
+export class UserService implements OnDestroy {
+  private user$$ = new BehaviorSubject<User | undefined>(undefined);
+  user$ = this.user$$.asObservable();
 
-  constructor() {
-    try {
-      const lsUser = localStorage.getItem(this.userKey);
-      if (lsUser) {
-        this.user = JSON.parse(lsUser);
-      }
-    } catch (err) {
-      this.user = undefined;
-    }
+  user: User | undefined;
+  subscription: Subscription;
+
+  constructor(private http: HttpClient) {
+    this.subscription = this.user$.subscribe((user) => {
+      this.user = user;
+    });
   }
 
   get isLogged(): boolean {
     return !!this.user;
   }
 
-  login() {
-    const user = {
-      _id: '5fa64b162183ce1728ff371d',
-      email: 'test@abv.bg',
-      firstName: 'Erdinch',
-    };
-    // hardcoded for now
+  register(registerData: RegisterData) {
+    return this.http.post<User>('/api/register', registerData).pipe(
+      tap(() => {
+        this.user$$.next(undefined);
+      })
+    );
+  }
 
-    localStorage.setItem(this.userKey, JSON.stringify(user));
-    this.user = user;
+  login(loginData: LoginData) {
+    return this.http.post<User>('/api/login', loginData).pipe(
+      tap((user) => {
+        this.user$$.next(user);
+      })
+    );
   }
 
   logout() {
-    this.user = undefined;
-    localStorage.removeItem(this.userKey);
+    return this.http.post('/api/logout', {}).pipe(
+      tap(() => {
+        this.user$$.next(undefined);
+      })
+    );
+  }
+
+  getProfile() {
+    return this.http.get<User>('/api/users/profile').pipe(
+      tap((user) => {
+        this.user$$.next(user);
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

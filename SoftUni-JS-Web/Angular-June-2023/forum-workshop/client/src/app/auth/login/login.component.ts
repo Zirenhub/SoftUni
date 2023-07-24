@@ -4,11 +4,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { emailValidator } from 'src/app/shared/validators/email-validator';
 import { EMAIL_DOMAINS } from 'src/app/shared/constants';
-
-type Data = {
-  email: string;
-  password: string;
-};
+import { LoginData } from 'src/types/auth';
 
 @Component({
   selector: 'app-login',
@@ -35,13 +31,15 @@ export class LoginComponent {
   ) {}
 
   login() {
-    // if (this.form.invalid) {
-    //   return;
-    // }
+    if (this.form.invalid) {
+      return;
+    }
 
-    const { email, password } = this.form.value;
+    const { email, password } = this.form.value as LoginData;
 
-    this.userService.login();
+    this.userService.login({ email, password }).subscribe({
+      next: (data) => console.log(data),
+    });
     this.router.navigate(['/home']);
   }
 }
