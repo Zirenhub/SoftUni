@@ -27,7 +27,7 @@ export class ThemesListComponent implements OnInit {
         this.themes = assignIsSubscribed;
       },
       error: (err) => {
-        console.log(err);
+        console.log(`Error getting themes`, err.message);
       },
     });
   }

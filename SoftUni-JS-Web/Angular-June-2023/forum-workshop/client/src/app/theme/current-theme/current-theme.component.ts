@@ -28,7 +28,6 @@ export class CurrentThemeComponent implements OnInit {
     if (themeId) {
       this.api.getTheme(themeId).subscribe({
         next: (data) => {
-          console.log(data);
           this.theme = data;
           this.theme.posts.forEach((post) => {
             if (this.user.user && post.likes.includes(this.user.user._id)) {
@@ -37,7 +36,7 @@ export class CurrentThemeComponent implements OnInit {
           });
         },
         error: (err) => {
-          console.log(`Error: ${err}`);
+          console.log(`Error getting theme`, err.message);
         },
       });
     }

@@ -29,10 +29,10 @@ export class CreateComponent {
     if (title && post) {
       this.api.createTheme(title, post).subscribe({
         next: (data) => {
-          console.log(data);
+          this.router.navigate(['/themes']);
         },
         error: (err) => {
-          console.log(`Error: ${err.message}`);
+          console.log(`Error creating theme`, err.message);
         },
       });
     }

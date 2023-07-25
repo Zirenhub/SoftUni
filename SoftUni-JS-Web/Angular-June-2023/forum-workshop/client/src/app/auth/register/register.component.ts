@@ -5,6 +5,7 @@ import { emailValidator } from 'src/app/shared/validators/email-validator';
 import { passwordMatchValidator } from 'src/app/shared/validators/password-match-validator';
 import { UserService } from '../user.service';
 import { RegisterData } from 'src/types/auth';
+import { Router } from '@angular/router';
 
 type PasswordGroup = {
   password: string;
@@ -39,7 +40,11 @@ export class RegisterComponent {
     ),
   });
 
-  constructor(private fb: FormBuilder, private userService: UserService) {}
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   register() {
     if (this.form.invalid) {
@@ -58,7 +63,9 @@ export class RegisterComponent {
     } as RegisterData;
 
     this.userService.register(registerData).subscribe({
-      next: (data) => console.log(data),
+      next: (data) => {
+        this.router.navigate(['/auth/login']);
+      },
     });
   }
 }

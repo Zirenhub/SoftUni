@@ -38,8 +38,9 @@ export class LoginComponent {
     const { email, password } = this.form.value as LoginData;
 
     this.userService.login({ email, password }).subscribe({
-      next: (data) => console.log(data),
+      next: (data) => {
+        this.router.navigate(['/home']);
+      },
     });
-    this.router.navigate(['/home']);
   }
 }

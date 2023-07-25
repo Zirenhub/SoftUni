@@ -15,11 +15,10 @@ export class RecentPostsComponent implements OnInit {
   ngOnInit(): void {
     this.api.getPosts(5).subscribe({
       next: (posts) => {
-        console.log(posts);
         this.posts = posts;
       },
       error: (err) => {
-        console.log(err);
+        console.log(`Error gettings posts`, err.message);
       },
     });
   }
