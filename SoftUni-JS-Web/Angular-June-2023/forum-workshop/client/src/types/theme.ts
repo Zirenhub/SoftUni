@@ -10,3 +10,5 @@ export type Theme = {
   updatedAt: string;
   __v: number;
 };
+
+export type NewTheme = Omit<Theme, 'userId'> & { userId: string };

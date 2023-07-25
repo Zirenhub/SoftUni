@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment.development';
-import { Theme } from 'src/types/theme';
+import { NewTheme, Theme } from 'src/types/theme';
 import { Post } from 'src/types/post';
 import { CurrentTheme } from 'src/types/theme-post';
 
@@ -23,6 +23,12 @@ export class ApiService {
   }
 
   createTheme(themeName: string, postText: string) {
-    return this.http.post(`${environment.URL}/themes`, { themeName, postText });
+    return this.http.post<NewTheme>(
+      `${environment.URL}/themes`,
+      { themeName, postText },
+      {
+        withCredentials: true,
+      }
+    );
   }
 }
