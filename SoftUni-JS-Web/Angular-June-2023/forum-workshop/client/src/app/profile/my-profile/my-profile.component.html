@@ -7,15 +7,15 @@
     <ng-container *ngIf="!isEditPage">
       <div class="flex">
         <p>Username:</p>
-        <p>Johny</p>
+        <p>{{ form.get("username")?.value }}</p>
       </div>
       <div class="flex">
         <p>Email:</p>
-        <p>john.doe@gmail.com</p>
+        <p>{{ form.get("email")?.value }}</p>
       </div>
       <div class="flex">
         <p>Phone:</p>
-        <p>+359 885 888 888</p>
+        <p>{{ form.get("tel")?.value }}</p>
       </div>
       <button class="edit-button" (click)="toggleEdit()">Edit</button>
     </ng-container>
